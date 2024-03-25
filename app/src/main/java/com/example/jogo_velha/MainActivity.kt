@@ -1,3 +1,5 @@
+package com.example.jogodavelha
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,6 +89,12 @@ fun TicTacToeGame() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Jogo da Velha",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Grid(
@@ -137,10 +146,10 @@ fun Grid(gridState: List<String>, onCellClicked: (Int) -> Unit) {
 fun Cell(modifier: Modifier = Modifier, text: String) {
     Box(
         modifier = modifier
-            .background(Color.Blue),
+            .background(Color.Yellow),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, fontSize = 28.sp)
+        Text(text = text, fontSize = 24.sp)
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.jogodavelha
+package com.example.jogo_velha
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -95,7 +95,7 @@ fun TicTacToeGame() {
             fontWeight = FontWeight.Bold,
             color = Color.White
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         Grid(
             gridState = gameState,
@@ -109,7 +109,7 @@ fun TicTacToeGame() {
             }
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
         Button(
             onClick = {

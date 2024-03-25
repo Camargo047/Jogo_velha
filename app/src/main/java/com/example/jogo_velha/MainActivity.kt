@@ -1,11 +1,10 @@
-package com.example.jogodavelha
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -31,38 +30,85 @@ fun TicTacToeGame() {
     var currentPlayer by remember { mutableStateOf("X") }
     var gameActive by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier
-        .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+    val winningPositions = listOf(
+        listOf(0, 1, 2),
+        listOf(3, 4, 5),
+        listOf(6, 7, 8),
+        listOf(0, 3, 6),
+        listOf(1, 4, 7),
+        listOf(2, 5, 8),
+        listOf(0, 4, 8),
+        listOf(2, 4, 6)
+    )
 
-        Spacer(
-            modifier = Modifier
-                .height(16.dp))
+    fun checkWinner(): String {
+        for (position in winningPositions) {
+            val (a, b, c) = position
+            if (gameState[a].isNotEmpty() && gameState[a] == gameState[b] && gameState[a] == gameState[c]) {
+                gameActive = false
+                return gameState[a]
+            }
+        }
+        if (!gameState.contains("")) {
+            gameActive = false
+            return "EMPATE"
+        }
+        return ""
+    }
 
-        // Display the game grid
+    val winner = checkWinner()
+
+    if (winner.isNotEmpty()) {
+        val message = when (winner) {
+            "EMPATE" -> "O jogo terminou em empate!"
+            else -> "O jogador $winner venceu!"
+        }
+        AlertDialog(
+            onDismissRequest = { /* Não faz nada, mantém o diálogo aberto */ },
+            title = { Text(text = "Fim de jogo") },
+            text = { Text(text = message) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        gameState = List(9) { "" }
+                        currentPlayer = "X"
+                        gameActive = true
+                    }
+                ) {
+                    Text(text = "Novo jogo")
+                }
+            }
+        )
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
         Grid(
             gridState = gameState,
             onCellClicked = { index ->
-                if (gameActive && gameState[index] == "") {
+                if (gameActive && gameState[index].isEmpty()) {
                     gameState = gameState.toMutableList().apply {
                         this[index] = currentPlayer
                     }
                     currentPlayer = if (currentPlayer == "X") "O" else "X"
-                    // Check for win or draw
                 }
-            })
+            }
+        )
 
-        Spacer(
-            modifier = Modifier
-                .height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
                 gameState = List(9) { "" }
                 currentPlayer = "X"
                 gameActive = true
-            }) {
+            }
+        ) {
             Text(text = "LIMPAR TELA", fontSize = 30.sp)
         }
     }
@@ -70,24 +116,31 @@ fun TicTacToeGame() {
 
 @Composable
 fun Grid(gridState: List<String>, onCellClicked: (Int) -> Unit) {
-    BoxWithConstraints {
-        val size = minWidth / 3
-        Column {
-            for (i in 0..2) {
-                Row {
-                    for (j in 0..2) {
-                        val index = i * 3 + j
-                        Box(modifier = Modifier
-                            .size(size)
-                            .background(Color.Yellow)
+    Column {
+        for (i in 0 until 3) {
+            Row {
+                for (j in 0 until 3) {
+                    val index = i * 3 + j
+                    Cell(
+                        modifier = Modifier
+                            .size(100.dp)
                             .clickable { onCellClicked(index) },
-                            contentAlignment = Alignment.Center) {
-                            Text(text = gridState[index], fontSize = 24.sp)
-                        }
-                    }
+                        text = gridState[index]
+                    )
                 }
             }
         }
+    }
+}
+
+@Composable
+fun Cell(modifier: Modifier = Modifier, text: String) {
+    Box(
+        modifier = modifier
+            .background(Color.Blue),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = text, fontSize = 28.sp)
     }
 }
 
@@ -95,10 +148,4 @@ fun Grid(gridState: List<String>, onCellClicked: (Int) -> Unit) {
 @Composable
 fun PreviewTicTacToeGame() {
     TicTacToeGame()
-}
-
-@Preview
-@Composable
-fun PreviewGrid() {
-    Grid(gridState = listOf("X", "", "O", "", "X", "", "", "", "O")) {}
 }
